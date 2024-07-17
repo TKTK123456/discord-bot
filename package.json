@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A discord bot",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "node ."
   },
@@ -17,7 +18,6 @@
   },
   "homepage": "https://github.com/TKTK123456/discord-bot#readme",
   "dependencies": {
-    "discord.js": "^14.15.3",
-    "discord.js-selfbot-v13": "^3.2.2"
+    "discord.js": "^14.15.3"
   }
 }
