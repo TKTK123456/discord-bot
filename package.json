@@ -1,0 +1,23 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "description": "A discord bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TKTK123456/discord-bot.git"
+  },
+  "author": "TKTK1234567",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TKTK123456/discord-bot/issues"
+  },
+  "homepage": "https://github.com/TKTK123456/discord-bot#readme",
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "discord.js-selfbot-v13": "^3.2.2"
+  }
+}
