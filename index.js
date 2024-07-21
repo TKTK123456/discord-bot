@@ -7,6 +7,8 @@ import {
   SlashCommandBuilder,
   Partials,
   PermissionsBitField,
+  RoleFlagsBitField,
+  RoleManager,
 } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
@@ -22,10 +24,24 @@ const client = new Client({
   partials: [Partials.Channel, Partials.Message, Partials.User],
 });
 const __dirname = path.resolve();
-async function editArrayItem(array, index, newItem) {
-  const Array = array
-  Array[index] = newItem;
-  return Array;
+client.commands = new Collection();
+
+const foldersPath = path.join(__dirname, 'commands');
+const commandFolders = fs.readdirSync(foldersPath);
+
+for (const folder of commandFolders) {
+  const commandsPath = path.join(foldersPath, folder);
+  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+  for (const file of commandFiles) {
+    const filePath = path.join(commandsPath, file);
+    const command = await import(filePath);
+    // Set a new item in the Collection with the key as the command name and the value as the exported module
+    if ('data' in command && 'execute' in command) {
+      client.commands.set(command.data.name, command);
+    } else {
+      console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+    }
+  }
 }
 async function getPrefixs() {
   let prefixs = fs
@@ -43,30 +59,22 @@ let prefixList;
 client.on("ready", async () => {
   console.log(`Logged in as ${client.user.tag}!`);
   prefixList = await getPrefixs();
+  
 });
 client.on("messageCreate", (message) => {
   const prefix = prefixList
     .find((p) => p.startsWith(message.guild.id))
     .split(": ");
-  if (
-    message.content.toLowerCase().startsWith(`${prefix[1]}setprefix`) ||
-    message.content.toLowerCase().startsWith(`${prefix[1]} setprefix`)
-  ) {
-    if (message.member.permissions.has("Administrator")) {
-      const newPrefix = message.content.split(" ")[1];
-      if (newPrefix) {
-        const prefixLocationInList = prefixList.findIndex((p) =>
-          p.startsWith(message.guild.id),
-        );
-        prefixList[prefixLocationInList] = `${message.guild.id}: ${newPrefix}`;
-        fs.writeFileSync(`${__dirname}/prefixs.txt`, prefixList.join("\n"));
-        message.reply(`Prefix set to ${newPrefix}`);
-        getPrefixs();
-      } else {
-        message.reply("Please provide a new prefix");
-      }
-    } else {
-      message.reply("You do not have permission to use this command");
+  if (message.content.startsWith(prefix[1])) {
+    const args = message.content.slice(prefix[1].length).trim().split(/ +/);
+    const commandName = args.shift().toLowerCase();
+    const command = client.commands.get(commandName);
+    if (!command) return;
+    try {
+      command.execute(message, args);
+    } catch (error) {
+      console.error(error);
+      message.reply("There was an error trying to execute that command!");
     }
   }
 });
