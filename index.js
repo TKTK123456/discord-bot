@@ -26,20 +26,24 @@ const client = new Client({
 const __dirname = path.resolve();
 client.commands = new Collection();
 
-const foldersPath = path.join(__dirname, 'commands');
+const foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
-  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+  const commandFiles = fs
+    .readdirSync(commandsPath)
+    .filter((file) => file.endsWith(".js"));
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = await import(filePath);
     // Set a new item in the Collection with the key as the command name and the value as the exported module
-    if ('data' in command && 'execute' in command) {
-      client.commands.set(command.data.name, command);
+    if ("name" in command && "execute" in command) {
+      client.commands.set(command.name, command.execute);
     } else {
-      console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+      console.log(
+        `[WARNING] The command at ${filePath} is missing a required "name" or "execute" property.`,
+      );
     }
   }
 }
@@ -57,21 +61,23 @@ async function getPrefixs() {
 }
 let prefixList;
 client.on("ready", async () => {
-  console.log(`Logged in as ${client.user.tag}!`);
   prefixList = await getPrefixs();
-  
+  console.log(`Logged in as ${client.user.tag}!`);
 });
-client.on("messageCreate", (message) => {
+client.on("messageCreate", async (message) => {
   const prefix = prefixList
     .find((p) => p.startsWith(message.guild.id))
     .split(": ");
-  if (message.content.startsWith(prefix[1])) {
+  if (message.content.toLowerCase().startsWith(prefix[1])) {
     const args = message.content.slice(prefix[1].length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
-    const command = client.commands.get(commandName);
+    const command = message.client.commands.get(commandName);
     if (!command) return;
     try {
-      command.execute(message, args);
+      await command(message);
+      if (commandName === 'setprefix') {
+        prefixList = await getPrefixs();
+      }
     } catch (error) {
       console.error(error);
       message.reply("There was an error trying to execute that command!");

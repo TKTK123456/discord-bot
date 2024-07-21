@@ -36,11 +36,10 @@ async function getPrefixs() {
   prefixs = fs.readFileSync(`${__dirname}/prefixs.txt`, "utf-8").split("\n");
   return prefixs;
 }
-export default {
-  data: new Collection()
-  .set('name', 'setprefix')
-  .set('description', 'Set a new prefix for the bot'),
-  async execute(message) {
+  export const name = 'setprefix';
+  export const discription = `Set the prefix for the bot`;
+export async function execute(message) {
+  const prefixList = await getPrefixs()
     if (message.member.permissions.has("Administrator")) {
       const newPrefix = message.content.split(" ")[1];
       if (newPrefix) {
@@ -50,7 +49,6 @@ export default {
         prefixList[prefixLocationInList] = `${message.guild.id}: ${newPrefix}`;
         fs.writeFileSync(`${__dirname}/prefixs.txt`, prefixList.join("\n"));
         message.reply(`Prefix set to ${newPrefix}`);
-        getPrefixs();
       } else {
         message.reply("Please provide a new prefix");
       }
@@ -58,4 +56,3 @@ export default {
       message.reply("You do not have permission to use this command");
     }
   }
-}
