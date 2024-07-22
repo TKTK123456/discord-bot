@@ -25,24 +25,22 @@ const client = new Client({
   partials: [Partials.Channel, Partials.Message, Partials.User],
 });
 const __dirname = path.resolve();
-  export const name = 'setprefix';
-  export const discription = `Set's the prefix for the bot`;
+export const name = 'setbotadminrole';
+  export const discription = `Set's the bot admin role`;
 export async function execute(message) {
   const botAdminRoles = await getBotAdminRoles();
   const prefixList = await getPrefixs()
-    if (message.member.permissions.has("Administrator")||message.member.roles.cache.get(botAdminRoles.find((r) => r.startsWith(message.guild.id)))) {
-      const newPrefix = message.content.split(" ")[1];
-      if (newPrefix) {
-        const prefixLocationInList = prefixList.findIndex((p) =>
+    if (message.member.permissions.has("Administrator")||message.member.roles.cache.get(botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1])) {
+      const newRole = message.content.split(" ")[1].replace("<@&", "").replace(">", "");
+      if (newRole) {
+        const roleLocationInList = botAdminRoles.findIndex((p) =>
           p.startsWith(message.guild.id),
         );
-        prefixList[prefixLocationInList] = `${message.guild.id}: ${newPrefix}`;
-        fs.writeFileSync(`${__dirname}/prefixs.txt`, prefixList.join("\n"));
-        message.reply(`Prefix set to ${newPrefix}`);
+        botAdminRoles[roleLocationInList] = `${message.guild.id}: ${newRole}`;
+        fs.writeFileSync(`${__dirname}/botAdminRoles.txt`, botAdminRoles.join("\n"));
+        message.reply(`Bot admin role set to <@&${newRole}>`);
       } else {
-        message.reply("Please provide a new prefix");
+        message.reply("Please provide a new bot admin role");
       }
-    } else {
-      message.reply("You do not have permission to use this command");
     }
-  }
+}

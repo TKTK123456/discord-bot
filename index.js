@@ -12,6 +12,7 @@ import {
 } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
+import getPrefixs, { getBotAdminRoles } from "./getCommandStuff.js"
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -47,21 +48,11 @@ for (const folder of commandFolders) {
     }
   }
 }
-async function getPrefixs() {
-  let prefixs = fs
-    .readFileSync(`${__dirname}/prefixs.txt`, "utf-8")
-    .split("\n");
-  for (const guilds of client.guilds.cache.values()) {
-    if (!prefixs.find((p) => p.startsWith(guilds.id))) {
-      fs.appendFileSync(`${__dirname}/prefixs.txt`, `${guilds.id}: $\n`);
-    }
-  }
-  prefixs = fs.readFileSync(`${__dirname}/prefixs.txt`, "utf-8").split("\n");
-  return prefixs;
-}
 let prefixList;
+let botAdminRoles;
 client.on("ready", async () => {
   prefixList = await getPrefixs();
+  botAdminRoles = await getBotAdminRoles();
   console.log(`Logged in as ${client.user.tag}!`);
 });
 client.on("messageCreate", async (message) => {
@@ -78,11 +69,13 @@ client.on("messageCreate", async (message) => {
       if (commandName === 'setprefix') {
         prefixList = await getPrefixs();
       }
+      if (commandName === 'setbotadminrole') {
+        botAdminRoles = await getBotAdminRoles();
+      }
     } catch (error) {
       console.error(error);
       message.reply("There was an error trying to execute that command!");
     }
   }
 });
-
 client.login(process.env.token);
