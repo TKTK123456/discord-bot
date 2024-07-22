@@ -30,7 +30,7 @@ const __dirname = path.resolve();
 export async function execute(message) {
   const botAdminRoles = await getBotAdminRoles();
   const prefixList = await getPrefixs()
-    if (message.member.permissions.has("Administrator")||message.member.roles.cache.get(botAdminRoles.find((r) => r.startsWith(message.guild.id)))) {
+    if (message.member.permissions.has("Administrator")||message.member.roles.cache.get(botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1]).id === botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1]) {
       const newPrefix = message.content.split(" ")[1];
       if (newPrefix) {
         const prefixLocationInList = prefixList.findIndex((p) =>

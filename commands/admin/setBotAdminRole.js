@@ -30,7 +30,7 @@ export const name = 'setbotadminrole';
 export async function execute(message) {
   const botAdminRoles = await getBotAdminRoles();
   const prefixList = await getPrefixs()
-    if (message.member.permissions.has("Administrator")||message.member.roles.cache.get(botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1])) {
+    if (message.member.permissions.has("Administrator")||message.member.roles.cache.get(botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1]).id === botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1]) {
       const newRole = message.content.split(" ")[1].replace("<@&", "").replace(">", "");
       if (newRole) {
         const roleLocationInList = botAdminRoles.findIndex((p) =>
