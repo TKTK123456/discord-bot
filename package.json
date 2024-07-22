@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/TKTK123456/discord-bot#readme",
   "dependencies": {
-    "discord.js": "^14.15.3"
+    "discord.js": "^14.15.3",
+    "open": "^10.1.0"
   }
 }
