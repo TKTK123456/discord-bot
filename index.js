@@ -9,10 +9,13 @@ import {
   PermissionsBitField,
   RoleFlagsBitField,
   RoleManager,
+  ChannelType,
 } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
 import getPrefixs, { getBotAdminRoles } from "./getCommandStuff.js"
+import repl from "repl";
+import { channel } from "node:diagnostics_channel";
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -56,6 +59,8 @@ client.on("ready", async () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 client.on("messageCreate", async (message) => {
+  if (message.author.bot) return;
+  if (message.channel.type !== ChannelType.DM) {
   const prefix = prefixList
     .find((p) => p.startsWith(message.guild.id))
     .split(": ");
@@ -77,5 +82,27 @@ client.on("messageCreate", async (message) => {
       message.reply("There was an error trying to execute that command!");
     }
   }
+  } else {
+    const prefix = '$'
+    if (message.content.toLowerCase().startsWith(prefix)) {
+      const args = message.content.slice(prefix.length).trim().split(/ +/);
+      const commandName = args.shift().toLowerCase();
+      const command = message.client.commands.get(commandName);
+      if (!command) return;
+      try {
+        await command(message);
+        if (commandName === 'setprefix') {
+          prefixList = await getPrefixs();
+        }
+        if (commandName === 'setbotadminrole') {
+          botAdminRoles = await getBotAdminRoles();
+        }
+      } catch (error) {
+        console.error(error);
+        message.reply("There was an error trying to execute that command!");
+      }
+    }
+  }
 });
 client.login(process.env.token);
+const r = repl.start('$ ')

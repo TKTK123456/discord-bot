@@ -30,9 +30,9 @@ export const name = 'setbotadminrole';
 export async function execute(message) {
   const botAdminRoles = await getBotAdminRoles();
   const prefixList = await getPrefixs()
-    if (message.member.permissions.has("Administrator")||message.member.roles.cache.get(botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1]).id === botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1]) {
+    if (message.member.permissions.has("Administrator")||message.member.roles.cache.get(botAdminRoles.find((r) => r.startsWith(message.guild.id)).split(": ")[1])) {
       const newRole = message.content.split(" ")[1].replace("<@&", "").replace(">", "");
-      if (newRole) {
+      if (newRole) { 
         const roleLocationInList = botAdminRoles.findIndex((p) =>
           p.startsWith(message.guild.id),
         );
@@ -42,5 +42,7 @@ export async function execute(message) {
       } else {
         message.reply("Please provide a new bot admin role");
       }
+    } else {
+      message.repy("You do not have permission to use this command");
     }
 }
