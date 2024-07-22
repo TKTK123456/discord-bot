@@ -19,6 +19,7 @@ import getPrefixs, { getBotAdminRoles } from "./getCommandStuff.js"
 import repl from "repl";
 import http from "http";
 import open from "open";
+import { fileURLToPath } from "node:url";
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -118,6 +119,8 @@ app.listen(8080, () => {
 app.addListener("error", (err) => {
   console.log(err);
 })
-app.addListener("request", (req, res) => {
-  console.log(req.url);
+app.post('/', (req, res) => {
+  res.send('Got a POST request')
 })
+const __filename = fileURLToPath(import.meta.url);
+console.log(__filename)
