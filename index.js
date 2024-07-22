@@ -13,9 +13,11 @@ import {
 } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
+import url from "url";
 import getPrefixs, { getBotAdminRoles } from "./getCommandStuff.js"
 import repl from "repl";
 import http from "http";
+import open from "open";
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -103,3 +105,12 @@ client.on("messageCreate", async (message) => {
 });
 client.login(process.env.token);
 const r = repl.start('$ ');
+r.context.client = client;
+async function test() {
+  try{
+  await open('https://sindresorhus.com', {app: {name: 'google chrome', arguments: ['--incognito']}});
+  } catch(err) {
+    console.log(err);
+  }
+}
+test()
