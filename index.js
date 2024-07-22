@@ -13,6 +13,7 @@ import {
 } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
+import express, { application } from "express";
 import url from "url";
 import getPrefixs, { getBotAdminRoles } from "./getCommandStuff.js"
 import repl from "repl";
@@ -106,11 +107,17 @@ client.on("messageCreate", async (message) => {
 client.login(process.env.token);
 const r = repl.start('$ ');
 r.context.client = client;
-async function test() {
-  try{
-  await open('https://sindresorhus.com', {app: {name: 'google chrome', arguments: ['--incognito']}});
-  } catch(err) {
-    console.log(err);
-  }
-}
-test()
+const app = express();
+app.get('/', async (req, res) => {
+  const filePath = path.resolve(__dirname, 'index.html');
+  res.sendFile(filePath);
+});
+app.listen(8080, () => {
+  console.log('Server is up!')
+});
+app.addListener("error", (err) => {
+  console.log(err);
+})
+app.addListener("request", (req, res) => {
+  console.log(req.url);
+})
