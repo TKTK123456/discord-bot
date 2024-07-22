@@ -15,7 +15,7 @@ import fs from "node:fs";
 import path from "node:path";
 import getPrefixs, { getBotAdminRoles } from "./getCommandStuff.js"
 import repl from "repl";
-import { channel } from "node:diagnostics_channel";
+import http from "http";
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -89,14 +89,11 @@ client.on("messageCreate", async (message) => {
       const commandName = args.shift().toLowerCase();
       const command = message.client.commands.get(commandName);
       if (!command) return;
+      if (commandName === 'setprefix'||commandName === 'setbotadminrole') {
+        return
+      }
       try {
         await command(message);
-        if (commandName === 'setprefix') {
-          prefixList = await getPrefixs();
-        }
-        if (commandName === 'setbotadminrole') {
-          botAdminRoles = await getBotAdminRoles();
-        }
       } catch (error) {
         console.error(error);
         message.reply("There was an error trying to execute that command!");
@@ -105,4 +102,8 @@ client.on("messageCreate", async (message) => {
   }
 });
 client.login(process.env.token);
-const r = repl.start('$ ')
+const r = repl.start('$ ');
+const server = http.createServer((req, res) => {
+  res.write("Hello world")
+  res.end();
+}).listen(8080)
