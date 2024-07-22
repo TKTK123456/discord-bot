@@ -103,7 +103,3 @@ client.on("messageCreate", async (message) => {
 });
 client.login(process.env.token);
 const r = repl.start('$ ');
-const server = http.createServer((req, res) => {
-  res.write("Hello world")
-  res.end();
-}).listen(8080)
