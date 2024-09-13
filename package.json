@@ -19,6 +19,7 @@
   "homepage": "https://github.com/TKTK123456/discord-bot#readme",
   "dependencies": {
     "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "open": "^10.1.0"
   }

@@ -10,6 +10,7 @@ import {
   RoleFlagsBitField,
   RoleManager,
 } from "discord.js";
+import dotenv from "dotenv"
 import fs from "node:fs";
 import path from "node:path";
 import getPrefixs, { getBotAdminRoles } from "../../getCommandStuff.js"
@@ -24,6 +25,7 @@ const client = new Client({
   ],
   partials: [Partials.Channel, Partials.Message, Partials.User],
 });
+dotenv.config()
 const __dirname = path.resolve();
   export const name = 'setprefix';
   export const discription = `Set's the prefix for the bot`;

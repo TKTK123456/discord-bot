@@ -11,6 +11,7 @@ import {
   RoleManager,
   ChannelType,
 } from "discord.js";
+import dotenv from "dotenv"
 import fs from "node:fs";
 import path from "node:path";
 import express, { application } from "express";
@@ -33,7 +34,7 @@ const client = new Client({
 });
 const __dirname = path.resolve();
 client.commands = new Collection();
-
+dotenv.config()
 const foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
