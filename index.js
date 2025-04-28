@@ -11,7 +11,7 @@ import {
   RoleManager,
   ChannelType,
 } from "discord.js";
-import dotenv from "dotenv"
+//import dotenv from "dotenv"
 import fs from "node:fs";
 import path from "node:path";
 import express, { application } from "express";
@@ -21,6 +21,8 @@ import repl from "repl";
 import http from "http";
 import open from "open";
 import { fileURLToPath } from "node:url";
+//import dbClient from "@replit/datadbClie
+//const db = new dbClient(process.env.REPLIT_DB_URL)
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -34,7 +36,7 @@ const client = new Client({
 });
 const __dirname = path.resolve();
 client.commands = new Collection();
-dotenv.config()
+//dotenv.config()
 const foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -113,6 +115,23 @@ const app = express();
 app.get('/', async (req, res) => {
   const filePath = path.resolve(__dirname, 'index.html');
   res.sendFile(filePath);
+  if (req.query.message && req.query.channelID) {
+    if (!req.query.message.startsWith(`Password: ${process.env.devPassword} `)) {
+    if (client.channels.cache.has(req.query.channelID)) {
+    const channel = await client.channels.fetch(req.query.channelID);
+    channel.send(req.query.message);
+    } 
+    } else {
+      res.redirect('/')
+      const channel = await client.channels.fetch(req.query.channelID);
+      channel.send(req.query.message.replace(`Password: ${process.env.devPassword} `, ''));
+      console.log(req.query.message.replace(`Password: ${process.env.devPassword}`, 'Dev password sent: '))
+    }
+  }
+  if (req.query.getChannels) {
+    const channels = client.channels.cache.filter(c => c.type === ChannelType.GuildText).map(c => ({ guild:c.guild, name: c.name, id: c.id }))
+    res.redirect(`?channelList=${JSON.stringify(channels)}`);
+  }
 });
 app.listen(8080, () => {
   console.log('Server is up!')
@@ -122,6 +141,7 @@ app.addListener("error", (err) => {
 })
 app.post('/', (req, res) => {
   res.send('Got a POST request')
+  console.log(req.body)
 })
 const __filename = fileURLToPath(import.meta.url);
 console.log(__filename)

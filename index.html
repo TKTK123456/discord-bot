@@ -9,12 +9,50 @@
     <body>
         <h1>Welcome</h1>
         <form>
-            <input type="button" value="Get channels">
+            <input type="hidden" name="getChannels" value="true" />
+            <input type="submit" value="Get channels" />
         </form>
+        <div id="channelList"></div>
         <form>
-            <input type="text" name="message" placeholder="Message" id="message" />
-            <input type="text" name="channel id" placeholder="Channel ID" id="channelID" />
+            <input
+                type="text"
+                name="message"
+                placeholder="Message"
+                id="message"
+            />
+            <input
+                type="text"
+                name="channelID"
+                placeholder="Channel ID"
+                id="channelID"
+            />
             <input type="submit" value="send" />
         </form>
+        <script>
+            window.addEventListener("load", () => {
+                if (window.location.search.includes("channelList")) {
+                    const urlParams = new URLSearchParams(
+                        window.location.search,
+                    );
+                    let channelList = urlParams.get("channelList");
+                    channelList = JSON.parse(channelList);
+                    try {
+                        if (channelList.length > 0) {
+                            const channels = channelList;
+                            const channelListElement =
+                                document.getElementById("channelList");
+                            channels.forEach((channel) => {
+                                const channelElement =
+                                    document.createElement("div");
+                                channelElement.innerHTML = `<p>${channel.guild.name}: ${channel.name} - ${channel.id}</p>`;
+                                channelListElement.appendChild(channelElement);
+                            });
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            });
+        </script>
     </body>
 </html>

@@ -26,9 +26,10 @@ const client = new Client({
 });
 //dotenv.config()
 client.login(process.env.token)
-export const name = 'ping';
-  export const discription = `Get's the ping`;
+export const name = 'help';
+  export const discription = `Command list`;
 export async function execute(message) {
-  message.reply('Pong: ' + client.ws.ping)
-  
+  const commands = client.commands
+  console.log(commands)
+  //message.reply(`Commands: ${commands.join(', ')}`);
 }

@@ -9,3 +9,12 @@ run = ["sh", "-c", "node index.html"]
 [[ports]]
 localPort = 8080
 externalPort = 80
+
+[rules]
+
+[rules.formatter]
+
+[rules.formatter.fileExtensions]
+
+[rules.formatter.fileExtensions.".html"]
+id = "module:nodejs-20/formatter:prettier"
