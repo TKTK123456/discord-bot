@@ -88,6 +88,8 @@ client.on("messageCreate", async (message) => {
       console.error(error);
       message.reply("There was an error trying to execute that command!");
     }
+  } else {
+    console.log(message.content)
   }
   } else {
     const prefix = '$'
@@ -105,6 +107,8 @@ client.on("messageCreate", async (message) => {
         console.error(error);
         message.reply("There was an error trying to execute that command!");
       }
+    } else {
+      console.log(message.content)
     }
   }
 });
